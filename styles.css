@@ -107,7 +107,7 @@ h1 {
 /* Status Button Styling */
 .status-button {
     background-color: transparent;
-    color: #333; /* Slightly darker than the background */
+    color: #333; /* Default color for status buttons */
     border: none;
     padding: 0 5px;
     font-size: 0.9em;
@@ -119,8 +119,9 @@ h1 {
     color: #666; /* Slightly lighter on hover */
 }
 
+/* Specific styling for the 'x' button */
 .status-button.x-button {
-    color: #d3d3d3; /* Light grey for the 'x' button */
+    color: #474646 !important; /* Ensure a darker color with !important */
 }
 
 .bet .delete-button {

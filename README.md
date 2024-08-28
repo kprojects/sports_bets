@@ -50,8 +50,8 @@ CREATE TABLE bets (
 );
 ```
 3. **Configure the database connection:**
-   - Copy `config.php.example` to `config.php`.
-   - Update `config.php` with your database credentials.
+   - Open `config.php` in a text editor.
+   - Update the file with your MySQL/MariaDB credentials, including the database address and password.
 
 4. **Deploy the application:**
    - Place the project folder in your web server's root directory.

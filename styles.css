@@ -1,0 +1,168 @@
+/* Status Button Styling */
+.status-button {
+    background-color: transparent;
+    color: #268bd2; /* Blue */
+    border: none;
+    padding: 2px 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.status-button:hover {
+    color: #2aa198; /* Cyan on hover */
+}
+
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #002b36; /* Base03 */
+    color: #839496; /* Base0 */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    font-size: 14px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #073642; /* Base02 */
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 43, 54, 0.7); /* Darker shadow for dark theme */
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #93a1a1; /* Base1 */
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Grid Layout for Bets */
+.bets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.bet {
+    border: 1px solid #586e75; /* Base01 */
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #002b36; /* Base03 */
+}
+
+.bet h2 {
+    color: #268bd2; /* Blue */
+    margin-top: 0;
+    font-size: 1.2em;
+}
+
+.bet .game-info {
+    color: #268bd2; /* Same color as h2 */
+    font-size: 0.9em; /* Slightly smaller font size */
+    margin-top: -5px; /* Reduce spacing above */
+}
+
+.bet p {
+    margin: 0;
+    padding: 5px 0;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #93a1a1; /* Base1 */
+}
+
+.bet ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.bet ul li {
+    padding: 8px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #073642; /* Base02 */
+    font-size: 0.9em;
+    color: #839496; /* Base0 */
+}
+
+.bet ul li:last-child {
+    border-bottom: none;
+}
+
+.bet ul li em {
+    color: #b58900; /* Yellow */
+    font-weight: bold;
+}
+
+/* Status Colors */
+ul li.completed {
+    color: #859900; /* Green */
+    text-decoration: line-through;
+}
+
+ul li.pending {
+    color: #cb4b16; /* Orange */
+    font-weight: bold;
+}
+
+.container a {
+    color: #268bd2; /* Blue */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.container a:hover {
+    text-decoration: underline;
+}
+
+.bet h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.bet h2 a:hover {
+    color: #6c71c4; /* Violet */
+}
+
+p.amounts {
+    font-size: 0.9em;
+    color: #93a1a1; /* Base1 */
+}
+
+/* Index Page Button Styling */
+.index-page-button {
+    background-color: #268bd2; /* Blue background for the button */
+    color: #ffffff; /* White text color */
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.index-page-button:hover {
+    background-color: #2aa198; /* Cyan background on hover */
+    color: #ffffff; /* Ensure text remains white */
+}
+
+/* For Mobile Devices */
+@media (max-width: 768px) {
+    .bets-grid {
+        grid-template-columns: 1fr; /* Stack in a single column on small screens */
+    }
+    .container {
+        padding: 15px;
+    }
+    .bet ul li {
+        padding: 6px;
+    }
+}

@@ -217,4 +217,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
     </script>
 </body>
 </html>
-

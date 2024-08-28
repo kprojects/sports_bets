@@ -116,11 +116,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
         .status-button:hover {
             color: #666; /* Slightly lighter on hover */
         }
+        .status-button.x-button {
+            color: #d3d3d3; /* Light grey for the 'x' button */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Bets for <?= htmlspecialchars($bet_date) ?></h1>
+        
+        <!-- Link back to index -->
+        <p><a href="index.php" style="color: #268bd2; text-decoration: none; font-weight: bold;">&larr; Back to Index</a></p>
 
         <?php if (empty($grouped_bets)): ?>
             <p>No bets found for this date.</p>
@@ -151,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
                                         <form method="POST" action="bets.php?date=<?= htmlspecialchars($bet_date) ?>" style="display:inline;">
                                             <input type="hidden" name="leg_id" value="<?= htmlspecialchars($leg['id']) ?>">
                                             <input type="hidden" name="status" value="Pending">
-                                            <button type="submit" class="status-button">×</button>
+                                            <button type="submit" class="status-button x-button">×</button>
                                         </form>
                                     <?php endif; ?>
                                 </li>
@@ -211,3 +217,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
     </script>
 </body>
 </html>
+

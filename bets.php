@@ -79,47 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bets for <?= htmlspecialchars($bet_date) ?></title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .bets-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        .bet {
-            background-color: #2c2c2c;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .bet h2 {
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .bet .delete-button {
-            background: none;
-            border: none;
-            color: #f00;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-        .status-button {
-            background-color: transparent;
-            color: #333; /* Slightly darker than the background */
-            border: none;
-            padding: 0 5px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        .status-button:hover {
-            color: #666; /* Slightly lighter on hover */
-        }
-        .status-button.x-button {
-            color: #d3d3d3; /* Light grey for the 'x' button */
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -168,32 +127,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
             </div>
         <?php endif; ?>
 
-        <h2>Create a New Bet</h2>
-        <form method="POST">
-            <input type="hidden" name="date" value="<?= htmlspecialchars($bet_date) ?>">
-            <label for="parlay_name">Parlay Name:</label>
-            <input type="text" name="parlay_name" id="parlay_name" required>
-            
-            <label for="game_info">Game Info:</label>
-            <input type="text" name="game_info" id="game_info" required>
-            
-            <label for="odds">Odds:</label>
-            <input type="number" name="odds" id="odds" required>
-            
-            <label for="bet_amount">Bet Amount:</label>
-            <input type="number" name="bet_amount" id="bet_amount" step="0.01" required>
-            
-            <label for="potential_payout">Potential Payout:</label>
-            <input type="number" name="potential_payout" id="potential_payout" step="0.01" required>
+        <!-- Create New Bet Button and Form -->
+        <button class="create-button" onclick="toggleForm()">Create New Bet</button>
 
-            <h3>Legs</h3>
-            <div id="legs-container"></div>
-            <button type="button" onclick="addLeg()">Add Leg</button>
-            
-            <button type="submit">Create Bet</button>
-        </form>
+        <div id="createBetForm" class="hidden-form">
+            <form method="POST">
+                <input type="hidden" name="date" value="<?= htmlspecialchars($bet_date) ?>">
+                <label for="parlay_name">Parlay Name:</label>
+                <input type="text" name="parlay_name" id="parlay_name" required>
+                
+                <label for="game_info">Game Info:</label>
+                <input type="text" name="game_info" id="game_info" required>
+                
+                <label for="odds">Odds:</label>
+                <input type="number" name="odds" id="odds" required>
+                
+                <label for="bet_amount">Bet Amount:</label>
+                <input type="number" name="bet_amount" id="bet_amount" step="0.01" required>
+                
+                <label for="potential_payout">Potential Payout:</label>
+                <input type="number" name="potential_payout" id="potential_payout" step="0.01" required>
+
+                <h3>Legs</h3>
+                <div id="legs-container"></div>
+                <button type="button" onclick="addLeg()">Add Leg</button>
+                
+                <button type="submit">Create Bet</button>
+            </form>
+        </div>
     </div>
     <script>
+        function toggleForm() {
+            const form = document.getElementById('createBetForm');
+            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        }
+
         function addLeg() {
             const legContainer = document.getElementById('legs-container');
             const legIndex = legContainer.children.length;

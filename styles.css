@@ -121,7 +121,9 @@ h1 {
 
 /* Specific styling for the 'x' button */
 .status-button.x-button {
-    color: #474646 !important; /* Ensure a darker color with !important */
+    color: #474646 !important; /* Darker grey for better contrast */
+    font-size: 0.8em; /* Smaller size for the 'x' button */
+    cursor: pointer;
 }
 
 .bet .delete-button {

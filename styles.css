@@ -1,3 +1,4 @@
+/* styles.css version 2024.08.29.7 */
 /* General Styles */
 body {
     font-family: 'Roboto', sans-serif;
@@ -226,4 +227,14 @@ p.amounts {
     .bet ul li, .date-card {
         padding: 6px;
     }
+}
+
+.successful-parlay {
+    box-shadow: 0 0 15px 5px rgba(133, 153, 0, 0.7); /* Green glow */
+    border: 1px solid #859900; /* Green border */
+}
+
+.date-card.losing {
+    box-shadow: 0 0 15px rgba(204, 0, 0, 0.3); /* Subtle red shadow */
+    transition: box-shadow 0.3s ease;
 }

@@ -1,9 +1,31 @@
 <?php
+// bets.php version: 2024.08.29.7
+
 include 'config.php';
 
 // Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+// Function to update the parlay status
+function updateParlayStatus($pdo, $bet_id) {
+    // Check the statuses of all legs in this bet
+    $stmt = $pdo->prepare("SELECT COUNT(*) as total, SUM(status = 'Completed') as completed, SUM(status = 'Failed') as failed FROM bets WHERE bet_id = ?");
+    $stmt->execute([$bet_id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result['failed'] > 0) {
+        $parlay_status = 'Failed';
+    } elseif ($result['completed'] == $result['total']) {
+        $parlay_status = 'Successful';
+    } else {
+        $parlay_status = 'Pending';
+    }
+
+    // Update the parlay status
+    $stmt = $pdo->prepare("UPDATE bets SET parlay_status = ? WHERE bet_id = ?");
+    $stmt->execute([$parlay_status, $bet_id]);
+}
 
 // Get the date from the query string, defaulting to today in America/New_York timezone
 $bet_date = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
@@ -30,6 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['leg_id']) && isset($_
 
     $stmt = $pdo->prepare("UPDATE bets SET status = ? WHERE id = ?");
     $stmt->execute([$status, $leg_id]);
+
+    // Get the bet_id for this leg to update the parlay status
+    $stmt = $pdo->prepare("SELECT bet_id FROM bets WHERE id = ?");
+    $stmt->execute([$leg_id]);
+    $bet_id = $stmt->fetchColumn();
+
+    // Update the parlay status
+    updateParlayStatus($pdo, $bet_id);
 
     header("Location: bets.php?date=$bet_date");
     exit;
@@ -62,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
 
     foreach ($_POST['legs'] as $leg) {
         if (!empty($leg['player_name']) && !empty($leg['team']) && !empty($leg['condition'])) {
-            $stmt = $pdo->prepare("INSERT INTO bets (bet_id, date, game_info, parlay_name, player_name, team, `condition`, status, odds, bet_amount, potential_payout) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO bets (bet_id, date, game_info, parlay_name, player_name, team, `condition`, status, odds, bet_amount, potential_payout, parlay_status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?, ?, 'Pending')");
             $stmt->execute([$new_bet_id, $bet_date, $game_info, $parlay_name, $leg['player_name'], $leg['team'], $leg['condition'], $odds, $bet_amount, $potential_payout]);
         }
     }
@@ -83,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
 <body>
     <div class="container">
         <h1>Bets for <?= htmlspecialchars($bet_date) ?></h1>
-        
+
         <!-- Link back to index -->
         <p><a href="index.php" style="color: #268bd2; text-decoration: none; font-weight: bold;">&larr; Back to Index</a></p>
 
@@ -92,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
         <?php else: ?>
             <div class="bets-grid">
                 <?php foreach ($grouped_bets as $bet_id => $legs): ?>
-                    <div class="bet">
+                    <div class="bet <?= htmlspecialchars($legs[0]['parlay_status']) === 'Successful' ? 'successful-parlay' : '' ?>">
                         <h2>
                             <?= htmlspecialchars($legs[0]['parlay_name']) ?> <?= $legs[0]['odds'] > 0 ? '+' . htmlspecialchars($legs[0]['odds']) : htmlspecialchars($legs[0]['odds']) ?>
                             <form method="POST" action="bets.php?date=<?= htmlspecialchars($bet_date) ?>" style="display:inline;">
@@ -130,28 +160,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['parlay_name']) && iss
         <!-- Create New Bet Button and Form -->
         <button class="create-button" onclick="toggleForm()">Create New Bet</button>
 
-        <div id="createBetForm" class="hidden-form">
+        <div id="createBetForm" class="hidden-form" style="display: none;">
             <form method="POST">
                 <input type="hidden" name="date" value="<?= htmlspecialchars($bet_date) ?>">
                 <label for="parlay_name">Parlay Name:</label>
                 <input type="text" name="parlay_name" id="parlay_name" required>
-                
+
                 <label for="game_info">Game Info:</label>
                 <input type="text" name="game_info" id="game_info" required>
-                
+
                 <label for="odds">Odds:</label>
                 <input type="number" name="odds" id="odds" required>
-                
+
                 <label for="bet_amount">Bet Amount:</label>
                 <input type="number" name="bet_amount" id="bet_amount" step="0.01" required>
-                
+
                 <label for="potential_payout">Potential Payout:</label>
                 <input type="number" name="potential_payout" id="potential_payout" step="0.01" required>
 
                 <h3>Legs</h3>
                 <div id="legs-container"></div>
                 <button type="button" onclick="addLeg()">Add Leg</button>
-                
+
                 <button type="submit">Create Bet</button>
             </form>
         </div>

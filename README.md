@@ -48,7 +48,8 @@ CREATE TABLE bets (
     status ENUM('Pending', 'Completed', 'Failed') DEFAULT 'Pending',
     odds DECIMAL(10,2) NOT NULL,
     bet_amount DECIMAL(10,2) NOT NULL,
-    potential_payout DECIMAL(10,2) NOT NULL
+    potential_payout DECIMAL(10,2) NOT NULL,
+    parlay_status ENUM('Pending', 'Successful', 'Failed') DEFAULT 'Pending'
 );
 ```
 3. **Configure the database connection:**

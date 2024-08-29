@@ -1,4 +1,6 @@
 <?php
+// index.php version: 2024.08.29.7
+
 include 'config.php';
 
 // Enable error reporting for debugging
@@ -9,6 +11,37 @@ ini_set('display_errors', 1);
 $stmt = $pdo->prepare("SELECT DISTINCT DATE(date) AS bet_date FROM bets ORDER BY bet_date DESC");
 $stmt->execute();
 $dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Calculate total bet amount and successful payout for each date
+$results = [];
+foreach ($dates as $date) {
+    $bet_date = $date['bet_date'];
+
+    // Calculate total bet amount
+    $stmt = $pdo->prepare("
+        SELECT SUM(bet_amount) AS total_bet_amount
+        FROM (SELECT DISTINCT bet_id, bet_amount FROM bets WHERE DATE(date) = ?) AS unique_bets
+    ");
+    $stmt->execute([$bet_date]);
+    $total_bet_amount = $stmt->fetchColumn() ?? 0.0; // Ensure default 0.0 if null
+
+    // Calculate total payout for successful parlays
+    $stmt = $pdo->prepare("
+        SELECT SUM(potential_payout) AS total_successful_payout
+        FROM (SELECT DISTINCT bet_id, potential_payout FROM bets WHERE DATE(date) = ? AND parlay_status = 'Successful') AS successful_bets
+    ");
+    $stmt->execute([$bet_date]);
+    $total_successful_payout = $stmt->fetchColumn() ?? 0.0; // Ensure default 0.0 if null
+
+    // Calculate total winnings (payout - bet amount)
+    $total_winnings = $total_successful_payout - $total_bet_amount;
+
+    $results[$bet_date] = [
+        'total_bet' => $total_bet_amount,
+        'total_payout' => $total_successful_payout,
+        'total_winnings' => $total_winnings
+    ];
+}
 
 // Get today's date
 $today = date('Y-m-d');
@@ -67,6 +100,18 @@ $today = date('Y-m-d');
         .create-button:hover {
             background-color: #2aa198; /* Cyan on hover */
         }
+
+        /* Styles for winning day buttons */
+        .date-card.highlight-green {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7); /* Stronger green shadow */
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* Styles for losing day buttons */
+        .date-card.losing {
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7); /* Stronger red shadow */
+            transition: box-shadow 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -81,10 +126,18 @@ $today = date('Y-m-d');
         <!-- Display Past Dates in a Grid -->
         <div class="dates-grid">
             <?php foreach ($dates as $date): ?>
-                <div class="date-card">
+                <?php 
+                $is_win = isset($results[$date['bet_date']]) && $results[$date['bet_date']]['total_winnings'] > 0;
+                $is_loss = isset($results[$date['bet_date']]) && $results[$date['bet_date']]['total_winnings'] < 0;
+                ?>
+                <div class="date-card <?= $is_win ? 'highlight-green' : ($is_loss ? 'losing' : '') ?>">
                     <a href="bets.php?date=<?= htmlspecialchars($date['bet_date']) ?>">
                         <?= htmlspecialchars($date['bet_date']) ?>
                     </a>
+                    <!-- Display totals -->
+                    <p>Total Bet: $<?= number_format($results[$date['bet_date']]['total_bet'], 2) ?></p>
+                    <p>Total Payout: $<?= number_format($results[$date['bet_date']]['total_payout'], 2) ?></p>
+                    <p>Total Winnings: $<?= number_format($results[$date['bet_date']]['total_winnings'], 2) ?></p>
                 </div>
             <?php endforeach; ?>
         </div>

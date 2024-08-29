@@ -2,7 +2,10 @@
 
 A PHP-based web application for tracking sports bets, specifically designed to manage and display parlays and their individual legs. This app allows you to create, view, update, and delete bets for each day, with options to mark legs as "Completed" or revert them back to "Pending."
 
-![Screenshot of UI](images/Screenshot%20from%202024-08-28%2002-11-59.png)
+![Screenshot of UI](images/Screenshot%20from%202024-08-29%2017-08-23.png)
+
+![Screenshot of UI](images/Screenshot%20from%202024-08-29%2017-07-40.png)
+
 
 ## Features
 
